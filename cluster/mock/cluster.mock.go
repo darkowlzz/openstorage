@@ -60,6 +60,18 @@ func (mr *MockClusterMockRecorder) ClearAlert(arg0, arg1 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClearAlert", reflect.TypeOf((*MockCluster)(nil).ClearAlert), arg0, arg1)
 }
 
+// CreatePair mocks base method
+func (m *MockCluster) CreatePair(arg0 *api.CreateClusterPairRequest) error {
+	ret := m.ctrl.Call(m, "CreatePair", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreatePair indicates an expected call of CreatePair
+func (mr *MockClusterMockRecorder) CreatePair(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePair", reflect.TypeOf((*MockCluster)(nil).CreatePair), arg0)
+}
+
 // DeleteNodeConf mocks base method
 func (m *MockCluster) DeleteNodeConf(arg0 string) error {
 	ret := m.ctrl.Call(m, "DeleteNodeConf", arg0)
@@ -70,6 +82,18 @@ func (m *MockCluster) DeleteNodeConf(arg0 string) error {
 // DeleteNodeConf indicates an expected call of DeleteNodeConf
 func (mr *MockClusterMockRecorder) DeleteNodeConf(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNodeConf", reflect.TypeOf((*MockCluster)(nil).DeleteNodeConf), arg0)
+}
+
+// DeletePair mocks base method
+func (m *MockCluster) DeletePair(arg0 *api.DeleteClusterPairRequest) error {
+	ret := m.ctrl.Call(m, "DeletePair", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeletePair indicates an expected call of DeletePair
+func (mr *MockClusterMockRecorder) DeletePair(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePair", reflect.TypeOf((*MockCluster)(nil).DeletePair), arg0)
 }
 
 // DisableUpdates mocks base method
@@ -211,6 +235,19 @@ func (mr *MockClusterMockRecorder) GetNodeIdFromIp(arg0 interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNodeIdFromIp", reflect.TypeOf((*MockCluster)(nil).GetNodeIdFromIp), arg0)
 }
 
+// GetPairToken mocks base method
+func (m *MockCluster) GetPairToken() (*api.ClusterPairTokenResponse, error) {
+	ret := m.ctrl.Call(m, "GetPairToken")
+	ret0, _ := ret[0].(*api.ClusterPairTokenResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPairToken indicates an expected call of GetPairToken
+func (mr *MockClusterMockRecorder) GetPairToken() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPairToken", reflect.TypeOf((*MockCluster)(nil).GetPairToken))
+}
+
 // Inspect mocks base method
 func (m *MockCluster) Inspect(arg0 string) (api.Node, error) {
 	ret := m.ctrl.Call(m, "Inspect", arg0)
@@ -222,6 +259,19 @@ func (m *MockCluster) Inspect(arg0 string) (api.Node, error) {
 // Inspect indicates an expected call of Inspect
 func (mr *MockClusterMockRecorder) Inspect(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Inspect", reflect.TypeOf((*MockCluster)(nil).Inspect), arg0)
+}
+
+// ListPairs mocks base method
+func (m *MockCluster) ListPairs() (*api.ListClusterPairsResponse, error) {
+	ret := m.ctrl.Call(m, "ListPairs")
+	ret0, _ := ret[0].(*api.ListClusterPairsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListPairs indicates an expected call of ListPairs
+func (mr *MockClusterMockRecorder) ListPairs() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListPairs", reflect.TypeOf((*MockCluster)(nil).ListPairs))
 }
 
 // NodeRemoveDone mocks base method
@@ -260,6 +310,19 @@ func (mr *MockClusterMockRecorder) PeerStatus(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PeerStatus", reflect.TypeOf((*MockCluster)(nil).PeerStatus), arg0)
 }
 
+// ProcessPairRequest mocks base method
+func (m *MockCluster) ProcessPairRequest(arg0 *api.ProcessClusterPairRequest) (*api.ProcessClusterPairResponse, error) {
+	ret := m.ctrl.Call(m, "ProcessPairRequest", arg0)
+	ret0, _ := ret[0].(*api.ProcessClusterPairResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ProcessPairRequest indicates an expected call of ProcessPairRequest
+func (mr *MockClusterMockRecorder) ProcessPairRequest(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessPairRequest", reflect.TypeOf((*MockCluster)(nil).ProcessPairRequest), arg0)
+}
+
 // Remove mocks base method
 func (m *MockCluster) Remove(arg0 []api.Node, arg1 bool) error {
 	ret := m.ctrl.Call(m, "Remove", arg0, arg1)
@@ -270,6 +333,19 @@ func (m *MockCluster) Remove(arg0 []api.Node, arg1 bool) error {
 // Remove indicates an expected call of Remove
 func (mr *MockClusterMockRecorder) Remove(arg0, arg1 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Remove", reflect.TypeOf((*MockCluster)(nil).Remove), arg0, arg1)
+}
+
+// ResetPairToken mocks base method
+func (m *MockCluster) ResetPairToken() (*api.ClusterPairTokenResponse, error) {
+	ret := m.ctrl.Call(m, "ResetPairToken")
+	ret0, _ := ret[0].(*api.ClusterPairTokenResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ResetPairToken indicates an expected call of ResetPairToken
+func (mr *MockClusterMockRecorder) ResetPairToken() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResetPairToken", reflect.TypeOf((*MockCluster)(nil).ResetPairToken))
 }
 
 // SetClusterConf mocks base method

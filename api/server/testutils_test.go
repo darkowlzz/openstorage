@@ -17,6 +17,7 @@ import (
 	mockdriver "github.com/libopenstorage/openstorage/volume/drivers/mock"
 
 	"github.com/libopenstorage/openstorage/cluster"
+	clustermanager "github.com/libopenstorage/openstorage/cluster/manager"
 )
 
 const (
@@ -43,7 +44,7 @@ func newTestCluster(t *testing.T) *testCluster {
 
 	// Save already set value of cluster.Inst to set it back
 	// when we finish the tests by the defer()
-	tester.oldInst = cluster.Inst
+	tester.oldInst = clustermanager.Inst
 
 	// Create mock controller
 	tester.mc = gomock.NewController(&utils.SafeGoroutineTester{})
@@ -52,7 +53,7 @@ func newTestCluster(t *testing.T) *testCluster {
 	tester.c = mockcluster.NewMockCluster(tester.mc)
 
 	// Override cluster.Inst to return our mock cluster
-	cluster.Inst = func() (cluster.Cluster, error) {
+	clustermanager.Inst = func() (cluster.Cluster, error) {
 		return tester.c, nil
 	}
 
@@ -123,7 +124,7 @@ func (c *testCluster) MockCluster() *mockcluster.MockCluster {
 }
 
 func (c *testCluster) Finish() {
-	cluster.Inst = c.oldInst
+	clustermanager.Inst = c.oldInst
 	c.mc.Finish()
 }
 

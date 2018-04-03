@@ -553,3 +553,72 @@ message ActiveRequests {
   int64 RequestCount = 1;
   repeated ActiveRequest ActiveRequest = 2;
 }
+
+// CreateClusterPairRequest
+// swagger: model
+message CreateClusterPairRequest {
+    // IP of the remote cluster
+    string remote_cluster_ip = 1;
+    // Port for the remote cluster
+    uint32 remote_cluster_port = 2;
+    // Token used to authenticate with the remote cluster
+    string remote_cluster_token = 3;
+}
+
+// ProcessClusterPairRequest
+// swagger: model
+message ProcessClusterPairRequest {
+    // ID of the cluster requesting the pairing
+    string source_cluster_id = 1;
+    // Token used to authenticate with the remote cluster
+    string remote_cluster_token = 2;
+}
+
+// DeleteClusterPairRequest
+// swagger: model
+message DeleteClusterPairRequest {
+    // ID of the cluster pair to be deleted
+    string cluster_id = 1;
+}
+
+// ProcessClusterPairResponse
+// swagger: model
+message ProcessClusterPairResponse {
+    // UUID of the cluster which processed the pair request
+    string remote_cluster_uuid = 1;
+    // ID of the cluster which processed the pair request
+    string remote_cluster_id = 2;
+    // Key/value pair of options returned on successful pairing
+    map<string, string> options = 3;
+}
+
+// ClusterPairTokenResponse
+// swagger:response clusterPairTokenReponse
+message ClusterPairTokenResponse {
+    // Token used to authenticate clusters
+    string token = 1;
+}
+
+// ClusterPairInfo
+// swagger: model
+message ClusterPairInfo {
+    // UUID of the cluster
+    string uuid = 1;
+    // IP of the cluster
+    string ip = 2;
+    // Port for the cluster
+    uint32 port = 3;
+    // Flag used to determine if communication is over a secure channel
+    bool secure = 4;
+    // Token associated with cluster
+    string token = 5;
+    // Key/value pair of options associated with the cluster
+    map<string, string> options = 6;
+}
+
+// ListClusterPairsResponse
+// swagger: model
+message ListClusterPairsResponse {
+    // Map of cluster uuid to pairs
+    map<string, ClusterPairInfo> pairs = 1;
+}

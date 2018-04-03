@@ -1213,7 +1213,7 @@
       },
       "x-go-package": "github.com/libopenstorage/openstorage/api"
     },
-    "CloudBackupDeleteRequest": {
+    "CloudBackupDeleteAllRequest": {
       "type": "object",
       "properties": {
         "All": {
@@ -1230,6 +1230,24 @@
         },
         "SrcVolumeID": {
           "description": "SrcVolumeID is optional Source VolumeID for the request",
+          "type": "string"
+        }
+      },
+      "x-go-package": "github.com/libopenstorage/openstorage/api"
+    },
+    "CloudBackupDeleteRequest": {
+      "type": "object",
+      "properties": {
+        "CredentialUUID": {
+          "description": "CredentialUUID is the credential for cloud to be used for the request",
+          "type": "string"
+        },
+        "Force": {
+          "description": "Force Delete cloudbackup even if there are dependencies",
+          "type": "boolean"
+        },
+        "ID": {
+          "description": "ID is the ID of the cloud backup",
           "type": "string"
         }
       },
@@ -1600,50 +1618,97 @@
       "x-go-package": "github.com/libopenstorage/openstorage/api"
     },
     "ClusterConfig": {
-      "description": "ClusterConfig is a cluster level config parameter struct",
       "type": "object",
       "properties": {
-        "cluster_id": {
-          "type": "string",
-          "x-go-name": "ClusterId"
+        "ClusterId": {
+          "type": "string"
         },
-        "created": {
-          "type": "string",
-          "format": "date-time",
-          "x-go-name": "Created"
+        "DataIface": {
+          "type": "string"
         },
-        "description": {
-          "type": "string",
-          "x-go-name": "Description"
+        "DataIp": {
+          "type": "string"
         },
-        "domain": {
-          "type": "string",
-          "x-go-name": "Domain"
+        "DefaultDriver": {
+          "type": "string"
         },
-        "kvdb": {
-          "$ref": "#/definitions/KvdbConfig"
+        "FluentDHost": {
+          "type": "string"
         },
-        "mode": {
-          "type": "string",
-          "x-go-name": "Mode"
+        "LoggingURL": {
+          "type": "string"
         },
-        "private": {
-          "type": "object",
-          "x-go-name": "Private"
+        "ManagementURL": {
+          "type": "string"
         },
-        "secrets": {
-          "$ref": "#/definitions/SecretsConfig"
+        "MgmtIp": {
+          "type": "string"
         },
-        "version": {
-          "type": "string",
-          "x-go-name": "Version"
+        "MgtIface": {
+          "type": "string"
+        },
+        "NodeId": {
+          "type": "string"
         }
       },
-      "x-go-package": "github.com/libopenstorage/openstorage/osdconfig"
+      "x-go-package": "github.com/libopenstorage/openstorage/config"
     },
     "ClusterNotify": {
       "type": "integer",
       "format": "int32",
+      "x-go-package": "github.com/libopenstorage/openstorage/api"
+    },
+    "ClusterPairInfo": {
+      "description": "ClusterPairInfo\nswagger: model",
+      "type": "object",
+      "properties": {
+        "ip": {
+          "description": "IP of the cluster",
+          "type": "string",
+          "x-go-name": "Ip"
+        },
+        "options": {
+          "description": "Key/value pair of options associated with the cluster",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-go-name": "Options"
+        },
+        "port": {
+          "description": "Port for the cluster",
+          "type": "integer",
+          "format": "uint32",
+          "x-go-name": "Port"
+        },
+        "secure": {
+          "description": "Flag used to determine if communication is over a secure channel",
+          "type": "boolean",
+          "x-go-name": "Secure"
+        },
+        "token": {
+          "description": "Token associated with cluster",
+          "type": "string",
+          "x-go-name": "Token"
+        },
+        "uuid": {
+          "description": "UUID of the cluster",
+          "type": "string",
+          "x-go-name": "Uuid"
+        }
+      },
+      "x-go-package": "github.com/libopenstorage/openstorage/api"
+    },
+    "ClusterPairTokenResponse": {
+      "description": "ClusterPairTokenResponse",
+      "type": "object",
+      "properties": {
+        "token": {
+          "description": "Token used to authenticate clusters",
+          "type": "string",
+          "x-go-name": "Token"
+        }
+      },
       "x-go-package": "github.com/libopenstorage/openstorage/api"
     },
     "ClusterResponse": {
@@ -1697,6 +1762,29 @@
       "format": "int32",
       "x-go-package": "github.com/libopenstorage/openstorage/api"
     },
+    "CreateClusterPairRequest": {
+      "description": "CreateClusterPairRequest\nswagger: model",
+      "type": "object",
+      "properties": {
+        "remote_cluster_ip": {
+          "description": "IP of the remote cluster",
+          "type": "string",
+          "x-go-name": "RemoteClusterIp"
+        },
+        "remote_cluster_port": {
+          "description": "Port for the remote cluster",
+          "type": "integer",
+          "format": "uint32",
+          "x-go-name": "RemoteClusterPort"
+        },
+        "remote_cluster_token": {
+          "description": "Token used to authenticate with the remote cluster",
+          "type": "string",
+          "x-go-name": "RemoteClusterToken"
+        }
+      },
+      "x-go-package": "github.com/libopenstorage/openstorage/api"
+    },
     "CredCreateRequest": {
       "description": "CredCreateRequest is the input for CredCreate command",
       "type": "object",
@@ -1718,6 +1806,18 @@
         "UUID": {
           "description": "UUID of the credential that was just created",
           "type": "string"
+        }
+      },
+      "x-go-package": "github.com/libopenstorage/openstorage/api"
+    },
+    "DeleteClusterPairRequest": {
+      "description": "DeleteClusterPairRequest\nswagger: model",
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "description": "ID of the cluster pair to be deleted",
+          "type": "string",
+          "x-go-name": "ClusterId"
         }
       },
       "x-go-package": "github.com/libopenstorage/openstorage/api"
@@ -1852,6 +1952,21 @@
         }
       },
       "x-go-package": "github.com/libopenstorage/openstorage/osdconfig"
+    },
+    "ListClusterPairsResponse": {
+      "description": "ListClusterPairsResponse\nswagger: model",
+      "type": "object",
+      "properties": {
+        "pairs": {
+          "description": "Map of cluster uuid to pairs",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ClusterPairInfo"
+          },
+          "x-go-name": "Pairs"
+        }
+      },
+      "x-go-package": "github.com/libopenstorage/openstorage/api"
     },
     "NetworkConfig": {
       "description": "NetworkConfig is a network configuration parameters struct",
@@ -2002,6 +2117,48 @@
     "OperationFlags": {
       "type": "integer",
       "format": "int32",
+      "x-go-package": "github.com/libopenstorage/openstorage/api"
+    },
+    "ProcessClusterPairRequest": {
+      "description": "ProcessClusterPairRequest\nswagger: model",
+      "type": "object",
+      "properties": {
+        "remote_cluster_token": {
+          "description": "Token used to authenticate with the remote cluster",
+          "type": "string",
+          "x-go-name": "RemoteClusterToken"
+        },
+        "source_cluster_id": {
+          "description": "ID of the cluster requesting the pairing",
+          "type": "string",
+          "x-go-name": "SourceClusterId"
+        }
+      },
+      "x-go-package": "github.com/libopenstorage/openstorage/api"
+    },
+    "ProcessClusterPairResponse": {
+      "description": "ProcessClusterPairResponse\nswagger: model",
+      "type": "object",
+      "properties": {
+        "options": {
+          "description": "Key/value pair of options returned on successful pairing",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-go-name": "Options"
+        },
+        "remote_cluster_id": {
+          "description": "ID of the cluster which processed the pair request",
+          "type": "string",
+          "x-go-name": "RemoteClusterId"
+        },
+        "remote_cluster_uuid": {
+          "description": "UUID of the cluster which processed the pair request",
+          "type": "string",
+          "x-go-name": "RemoteClusterUuid"
+        }
+      },
       "x-go-package": "github.com/libopenstorage/openstorage/api"
     },
     "ReplicaSet": {
@@ -2761,11 +2918,6 @@
           "type": "boolean",
           "x-go-name": "Journal"
         },
-        "nfs": {
-          "description": "Nfs is true if this volume can be accessed via nfs.",
-          "type": "boolean",
-          "x-go-name": "Nfs"
-        },
         "passphrase": {
           "description": "Passphrase for an encrypted volume",
           "type": "string",
@@ -2784,6 +2936,11 @@
           "description": "Shared is true if this volume can be remotely accessed.",
           "type": "boolean",
           "x-go-name": "Shared"
+        },
+        "sharedv4": {
+          "description": "Sharedv4 is true if this volume can be accessed via sharedv4.",
+          "type": "boolean",
+          "x-go-name": "Sharedv4"
         },
         "size": {
           "description": "Size specifies the thin provisioned volume size.",
@@ -2855,6 +3012,15 @@
     }
   },
   "responses": {
+    "clusterPairTokenReponse": {
+      "description": "ClusterPairTokenResponse",
+      "headers": {
+        "token": {
+          "type": "string",
+          "description": "Token used to authenticate clusters"
+        }
+      }
+    },
     "clusterResponse": {
       "description": "ClusterResponse specifies a response that gets returned when requesting the cluster"
     },

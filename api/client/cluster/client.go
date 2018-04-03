@@ -7,6 +7,7 @@ import (
 
 	"github.com/libopenstorage/openstorage/api"
 	"github.com/libopenstorage/openstorage/api/client"
+	apierrors "github.com/libopenstorage/openstorage/api/errors"
 	"github.com/libopenstorage/openstorage/cluster"
 )
 
@@ -16,6 +17,8 @@ const (
 	managementurl   = "/managementurl"
 	fluentdhost     = "/fluentdconfig"
 	tunnelconfigurl = "/tunnelconfig"
+	PairPath        = "/pair"
+	PairTokenPath   = "/pairtoken"
 )
 
 type clusterClient struct {
@@ -29,6 +32,94 @@ func newClusterClient(c *client.Client) cluster.Cluster {
 // String description of this driver.
 func (c *clusterClient) Name() string {
 	return "ClusterManager"
+}
+
+func (c *clusterClient) CreatePair(
+	request *api.CreateClusterPairRequest,
+) error {
+
+	path := clusterPath + PairPath
+	response := c.c.Put().Resource(path).Body(request).Do()
+
+	if response.Error() != nil {
+		return response.FormatError()
+	}
+	return nil
+}
+
+func (c *clusterClient) ProcessPairRequest(
+	request *api.ProcessClusterPairRequest,
+) (*api.ProcessClusterPairResponse, error) {
+	resp := &api.ProcessClusterPairResponse{}
+
+	path := clusterPath + PairPath
+	response := c.c.Post().Resource(path).Body(request).Do()
+	if response.Error() != nil {
+		return nil, response.FormatError()
+	}
+
+	if err := response.Unmarshal(&resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *clusterClient) DeletePair(
+	request *api.DeleteClusterPairRequest,
+) error {
+
+	path := clusterPath + PairPath
+	response := c.c.Delete().Resource(path).Body(request).Do()
+
+	if response.Error() != nil {
+		return response.FormatError()
+	}
+	return nil
+}
+
+func (c *clusterClient) ListPairs() (*api.ListClusterPairsResponse, error) {
+	resp := &api.ListClusterPairsResponse{}
+	path := clusterPath + PairPath
+	response := c.c.Get().Resource(path).Do()
+
+	if response.Error() != nil {
+		return nil, response.FormatError()
+	}
+	if err := response.Unmarshal(&resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *clusterClient) ResetPairToken() (*api.ClusterPairTokenResponse, error) {
+	resp := &api.ClusterPairTokenResponse{}
+
+	path := clusterPath + PairTokenPath
+	response := c.c.Put().Resource(path).Do()
+	if response.Error() != nil {
+		return nil, response.FormatError()
+	}
+
+	if err := response.Unmarshal(&resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *clusterClient) GetPairToken() (*api.ClusterPairTokenResponse, error) {
+	resp := &api.ClusterPairTokenResponse{}
+
+	path := clusterPath + PairTokenPath
+	response := c.c.Get().Resource(path).Do()
+	if response.Error() != nil {
+		return nil, response.FormatError()
+	}
+
+	if err := response.Unmarshal(&resp); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 func (c *clusterClient) Enumerate() (api.Cluster, error) {
@@ -66,19 +157,19 @@ func (c *clusterClient) Inspect(nodeID string) (api.Node, error) {
 }
 
 func (c *clusterClient) AddEventListener(cluster.ClusterListener) error {
-	return nil
+	return &apierrors.ErrNotSupported{}
 }
 
 func (c *clusterClient) UpdateData(nodeData map[string]interface{}) error {
-	return nil
+	return &apierrors.ErrNotSupported{}
 }
 
 func (c *clusterClient) UpdateLabels(nodeLabels map[string]string) error {
-	return nil
+	return &apierrors.ErrNotSupported{}
 }
 
 func (c *clusterClient) GetData() (map[string]*api.Node, error) {
-	return nil, nil
+	return nil, &apierrors.ErrNotSupported{}
 }
 
 func (c *clusterClient) GetNodeIdFromIp(idIp string) (string, error) {
@@ -134,11 +225,11 @@ func (c *clusterClient) NodeRemoveDone(nodeID string, result error) {
 }
 
 func (c *clusterClient) Shutdown() error {
-	return nil
+	return &apierrors.ErrNotSupported{}
 }
 
 func (c *clusterClient) Start(int, bool, string) error {
-	return nil
+	return &apierrors.ErrNotSupported{}
 }
 
 func (c *clusterClient) DisableUpdates() error {

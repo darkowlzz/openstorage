@@ -575,3 +575,166 @@ func TestGetNodeIdFromIpFailed(t *testing.T) {
 	// Client code fix should be able to error respons: todo
 	assert.Contains(t, err.Error(), "error 500")
 }
+
+func TestCreateClusterPair(t *testing.T) {
+
+	// Create a new global test cluster
+	ts, tc := testClusterServer(t)
+	defer ts.Close()
+	defer tc.Finish()
+
+	// create a cluster client to make the REST call
+	c, err := clusterclient.NewClusterClient(ts.URL, "v1")
+	assert.NoError(t, err)
+
+	goodPairRequest := &api.CreateClusterPairRequest{
+		RemoteClusterIp:    "192.168.0.100",
+		RemoteClusterPort:  9010,
+		RemoteClusterToken: "testtoken",
+	}
+	noIPRequest := &api.CreateClusterPairRequest{
+		RemoteClusterIp:    "",
+		RemoteClusterPort:  9010,
+		RemoteClusterToken: "testtoken",
+	}
+	invalidPortRequest := &api.CreateClusterPairRequest{
+		RemoteClusterIp:    "192.168.0.100",
+		RemoteClusterPort:  0,
+		RemoteClusterToken: "testtoken",
+	}
+	noTokenRequest := &api.CreateClusterPairRequest{
+		RemoteClusterIp:    "192.168.0.100",
+		RemoteClusterPort:  9010,
+		RemoteClusterToken: "",
+	}
+
+	// mock the cluster response
+	tc.MockCluster().
+		EXPECT().
+		CreatePair(goodPairRequest).
+		Return(nil)
+	tc.MockCluster().
+		EXPECT().
+		CreatePair(noIPRequest).
+		Return(fmt.Errorf("No IP in request"))
+	tc.MockCluster().
+		EXPECT().
+		CreatePair(invalidPortRequest).
+		Return(fmt.Errorf("Invalid port in request"))
+	tc.MockCluster().
+		EXPECT().
+		CreatePair(noTokenRequest).
+		Return(fmt.Errorf("No token in request"))
+
+	// make the REST call
+	restClient := clusterclient.ClusterManager(c)
+	err = restClient.CreatePair(goodPairRequest)
+	assert.NoError(t, err)
+	err = restClient.CreatePair(noIPRequest)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "No IP in request")
+	err = restClient.CreatePair(invalidPortRequest)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "Invalid port in request")
+	err = restClient.CreatePair(noTokenRequest)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "No token in request")
+}
+
+func TestProcessClusterPair(t *testing.T) {
+
+	// Create a new global test cluster
+	ts, tc := testClusterServer(t)
+	defer ts.Close()
+	defer tc.Finish()
+
+	// create a cluster client to make the REST call
+	c, err := clusterclient.NewClusterClient(ts.URL, "v1")
+	assert.NoError(t, err)
+
+	goodPairRequest := &api.ProcessClusterPairRequest{
+		SourceClusterId:    "clusterID",
+		RemoteClusterToken: "testtoken",
+	}
+	noSourceClusterRequest := &api.ProcessClusterPairRequest{
+		SourceClusterId:    "",
+		RemoteClusterToken: "testtoken",
+	}
+	noTokenRequest := &api.ProcessClusterPairRequest{
+		SourceClusterId:    "clusterID",
+		RemoteClusterToken: "",
+	}
+
+	// mock the cluster response
+	tc.MockCluster().
+		EXPECT().
+		ProcessPairRequest(goodPairRequest).
+		Return(&api.ProcessClusterPairResponse{
+			RemoteClusterUuid: "testuuid",
+			RemoteClusterId:   "testid",
+		}, nil)
+	tc.MockCluster().
+		EXPECT().
+		ProcessPairRequest(noSourceClusterRequest).
+		Return(nil, fmt.Errorf("No cluster id in request"))
+	tc.MockCluster().
+		EXPECT().
+		ProcessPairRequest(noTokenRequest).
+		Return(nil, fmt.Errorf("No token in request"))
+
+	// make the REST call
+	restClient := clusterclient.ClusterManager(c)
+	resp, err := restClient.ProcessPairRequest(goodPairRequest)
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, resp.RemoteClusterUuid, "testuuid")
+	assert.Equal(t, resp.RemoteClusterId, "testid")
+
+	resp, err = restClient.ProcessPairRequest(noSourceClusterRequest)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "No cluster id in request")
+	assert.Nil(t, resp)
+
+	resp, err = restClient.ProcessPairRequest(noTokenRequest)
+	assert.Error(t, err)
+	assert.Nil(t, resp)
+	assert.Contains(t, err.Error(), "No token in request")
+}
+
+func TestPairToken(t *testing.T) {
+
+	// Create a new global test cluster
+	ts, tc := testClusterServer(t)
+	defer ts.Close()
+	defer tc.Finish()
+
+	// create a cluster client to make the REST call
+	c, err := clusterclient.NewClusterClient(ts.URL, "v1")
+	assert.NoError(t, err)
+
+	// mock the cluster response
+	tc.MockCluster().
+		EXPECT().
+		GetPairToken().
+		Return(&api.ClusterPairTokenResponse{
+			Token: "testtoken",
+		}, nil)
+	tc.MockCluster().
+		EXPECT().
+		ResetPairToken().
+		Return(&api.ClusterPairTokenResponse{
+			Token: "newtoken",
+		}, nil)
+
+	// make the REST call
+	restClient := clusterclient.ClusterManager(c)
+	resp, err := restClient.GetPairToken()
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, resp.Token, "testtoken")
+
+	resp, err = restClient.ResetPairToken()
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, resp.Token, "newtoken")
+}
